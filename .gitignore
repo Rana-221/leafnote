@@ -1,0 +1,12 @@
+node_modules
+dist
+.pnpm-store
+.preview-*
+.edge-profile*
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+.vscode
+.idea
