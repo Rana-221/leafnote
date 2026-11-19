@@ -129,7 +129,7 @@ VITE_SUPABASE_URL=https://your-project-ref.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-> 只能使用 Dashboard 中的 **anon / publishable key**。绝对不要把 `service_role` key 放进前端或 GitHub Secrets 暴露给构建产物。
+> 只能使用 Dashboard 中的 **anon / publishable key**。绝对不要把 `service_role` key 放进前端文件、`.env.production` 或公开仓库。
 
 ### 6. 本地运行
 
@@ -160,17 +160,17 @@ pnpm preview
 
 ## 部署到 GitHub Pages
 
-仓库已包含 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)。
+仓库已包含 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)，并已为当前项目写入 [`.env.production`](.env.production)。
 
 1. 将代码推到 GitHub 的 `main` 分支。
-2. 在仓库 **Settings → Secrets and variables → Actions** 添加：
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-3. 在 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**。
-4. 推送后 Actions 会自动构建并部署。
-5. 把部署后的 URL 填入 Supabase 的 **Site URL** 与 **Redirect URLs**。
+2. 工作流会自动启用/配置 GitHub Pages，并构建 `dist/` 后发布。
+3. 如果仓库尚未启用 Pages，也可以在 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**。
+4. 把部署后的 URL 填入 Supabase 的 **Site URL** 与 **Redirect URLs**。
+5. 在 Supabase 确认 **Confirm email** 已开启。
 
-Vite 使用 `base: './'`，因此项目页（`https://user.github.io/repo/`）和自定义域名都能直接工作，无需修改代码。`public/.nojekyll` 已包含，避免 GitHub Pages 的 Jekyll 处理。
+> `.env.production` 中只有 Supabase **publishable / anon** key。该 key 本来就随前端 JS 公开，不是服务端密钥；请永远不要放入 `service_role`。如果换成另一个 Supabase 项目，修改该文件后重新推送即可。
+
+Vite 使用 `base: './'`，因此项目页（`https://user.github.io/repo/`）和自定义域名都能直接工作，无需修改代码。部署步骤会生成 `dist/.nojekyll`，避免 GitHub Pages 的 Jekyll 处理。
 
 ### 关于国内访问
 
@@ -201,7 +201,7 @@ Vite 使用 `base: './'`，因此项目页（`https://user.github.io/repo/`）�
    - 群组外的用户完全无法读取。
 4. **头像 Storage 为私有 bucket**：前端用短时签名 URL 加载；Storage 对象策略只允许本人写入，同组组员读取。
 5. **笔记仅作者可编辑**：这是为脚本来源可信而做的安全取舍。其他组员能阅读，但不能修改内容或注入脚本。
-6. **邀请码**由数据库 `gen_random_bytes` 生成，可设置有效期、最大使用次数并撤销；普通组员也可创建。
+6. **邀请码**由数据库随机 UUID 片段生成，可设置有效期、最大使用次数并撤销；普通组员也可创建。
 7. **群组转让**仅群主可执行；转让后原群主变为普通组员，新群主成为管理员。群主还可以任免其他管理员。
 
 ## 实名可见性

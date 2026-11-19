@@ -32,13 +32,15 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build static site
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: pnpm build
 
       - name: Disable Jekyll processing
